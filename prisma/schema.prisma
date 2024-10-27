@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model accessories {
+  id          Int    @id @default(autoincrement())
+  name        String @db.VarChar(255)
+  description String @db.VarChar(255)
+  type        String @db.VarChar(64)
+  data        String @db.Text
+  price       Float  @db.Float
+  size        Float  @db.Float
+}
+
+model carts {
+  id       Int @id @default(autoincrement())
+  item_id  Int
+  quantity Int
+}
+
+model clothes {
+  id          Int    @id @default(autoincrement())
+  name        String @db.VarChar(255)
+  description String @db.VarChar(255)
+  main_type   String @db.VarChar(64)
+  type        String @db.VarChar(64)
+  data        String @db.Text
+  price       Float  @db.Float
+  size        Float  @db.Float
+  gender      String @db.VarChar(32)
+}
+
+model reviews {
+  id         Int    @id @default(autoincrement())
+  user_id    Int
+  product_id Int
+  comment    String @db.VarChar(255)
+}
+
+model shoes {
+  id          Int    @id @default(autoincrement())
+  name        String @db.VarChar(255)
+  description String @db.VarChar(255)
+  brand       String @db.VarChar(32)
+  size        Float  @db.Float
+  data        String @db.Text
+  price       Float  @db.Float
+  type        String @db.VarChar(32)
+  gender      String @db.VarChar(32)
+}
+
+model users {
+  id           Int     @id @default(autoincrement())
+  username     String  @db.VarChar(255)
+  password     String  @db.VarChar(255)
+  name         String? @db.VarChar(255)
+  email        String  @unique @db.VarChar(255)
+  phone_number String? @db.VarChar(32)
+  role         Int
+}
