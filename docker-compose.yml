@@ -1,0 +1,35 @@
+version: '3.1'
+
+services:
+
+  hooper_db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: hooper_gate
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_USER: hooper
+      MYSQL_PASSWORD: password
+    networks:
+      - hooper_network
+    ports:
+      - 3306:3306
+    volumes:
+      - hooper_db_data:/var/lib/mysql
+
+  hooper_phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      - hooper_network
+    
+networks:
+  hooper_network:
+    driver: bridge
+
+volumes:
+  hooper_db_data:

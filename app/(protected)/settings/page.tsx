@@ -1,4 +1,5 @@
 import { auth, signOut } from "@/auth";
+import { Button } from "@/components/ui/button";
 
 const SettingsPage = async () => {
 
@@ -12,7 +13,7 @@ const SettingsPage = async () => {
                 "use server";
                 await signOut();
             }}>
-                <button type="submit">Sign Out</button>
+                <Button type="submit">Sign Out</Button>
             </form>
         </div>
     )

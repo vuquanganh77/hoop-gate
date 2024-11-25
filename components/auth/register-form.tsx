@@ -48,7 +48,7 @@ export function RegisterForm() {
     }
 
     return (
-        <CardWrapper headerLabel="Create an account" backButtonLabel="Already have an account?" backButtonHref="/auth/login" showSocial>
+        <CardWrapper headerTitle="🏀 Hooper Gate" headerLabel="Create an account" backButtonLabel="Already have an account?" backButtonHref="/auth/login" showSocial>
             <Form {...form}>
                 <form 
                     onSubmit={form.handleSubmit(onSubmit)}

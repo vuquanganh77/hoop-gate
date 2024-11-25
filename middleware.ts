@@ -1,43 +1,30 @@
-import NextAuth from "next-auth";
+import { NextRequest, NextResponse } from "next/server"
+import { apiMiddleware } from "./middlewares/api.middleware"
+import { authMiddleware } from "./middlewares/auth.middleware"
 
-import authConfig from "@/auth.config";
 
-import {
-    DEFAULT_LOGIN_REDIRECT,
-    apiAuthPrefix,
-    publicRoutes,
-    authRoutes,
-} from "@/routes";
 
-const { auth } = NextAuth(authConfig);
-
-export default auth((req) => {
+export async function middleware(req: NextRequest) {
+ 
     const { nextUrl } = req;
-    const isLoggedIn = !!req.auth;
-
-    const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-    const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
-    const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-
-    if (isApiAuthRoute) {
-        return null;
+    
+    if (!nextUrl.pathname.startsWith('/api')) {
+        const authResponse = await authMiddleware(req);
+        if (authResponse) return authResponse;
     }
 
-    if (isAuthRoute) {
-        if(isLoggedIn) {
-            return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
-        }
-        return null;
+    
+
+    if (nextUrl.pathname.startsWith('/api')) {
+        const tokenResponse = await apiMiddleware(req);
+        
+        if (tokenResponse) return tokenResponse;
     }
 
-    if (!isLoggedIn && !isPublicRoute) {
-        return Response.redirect(new URL("/auth/login", nextUrl));
-    }
+    NextResponse.next();
 
-    return null;
-
-})
+}
 
 export const config = {
-    matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+    matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)", '/api/:path*' ],
 }

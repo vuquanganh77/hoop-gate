@@ -7,51 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model accessories {
-  id          Int    @id @default(autoincrement())
-  name        String @db.VarChar(255)
-  description String @db.VarChar(255)
-  type        String @db.VarChar(64)
-  data        String @db.Text
-  price       Float  @db.Float
-  size        Float  @db.Float
-}
-
 model carts {
-  id       Int @id @default(autoincrement())
-  item_id  Int
-  quantity Int
-}
-
-model clothes {
-  id          Int    @id @default(autoincrement())
-  name        String @db.VarChar(255)
-  description String @db.VarChar(255)
-  main_type   String @db.VarChar(64)
-  type        String @db.VarChar(64)
-  data        String @db.Text
-  price       Float  @db.Float
-  size        Float  @db.Float
-  gender      String @db.VarChar(32)
-}
-
-model reviews {
-  id         Int    @id @default(autoincrement())
-  user_id    Int
-  product_id Int
-  comment    String @db.VarChar(255)
-}
-
-model shoes {
-  id          Int    @id @default(autoincrement())
-  name        String @db.VarChar(255)
-  description String @db.VarChar(255)
-  brand       String @db.VarChar(32)
-  size        Float  @db.Float
-  data        String @db.Text
-  price       Float  @db.Float
-  type        String @db.VarChar(32)
-  gender      String @db.VarChar(32)
+  id              Int    @id @default(autoincrement())
+  product_size_id Int
+  user_id         Int
+  quantity        Int
+  createdAt       String @db.VarChar(255)
+  updatedAt       String @db.VarChar(255)
 }
 
 model users {
@@ -62,4 +24,77 @@ model users {
   email        String  @unique @db.VarChar(255)
   phone_number String? @db.VarChar(32)
   role         Int
+}
+
+model comments {
+  id         Int    @id @default(autoincrement())
+  product_id Int
+  user_id    Int
+  createAt   String @db.VarChar(255)
+  updatedAt  String @db.VarChar(255)
+  content    String @db.VarChar(255)
+  star       Int
+}
+
+model order_detail {
+  id              Int    @id @default(autoincrement())
+  order_id        Int
+  quantity        Int
+  product_size_id Int
+  createAt        String @db.VarChar(255)
+  updatedAt       String @db.VarChar(255)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model orders {
+  id                Int
+  address_id        Int
+  is_payment_online Int
+  total_price       Float  @db.Float
+  createdAt         String @db.VarChar(255)
+  updatedAt         String @db.VarChar(255)
+  status            Int?   @default(0)
+
+  @@ignore
+}
+
+model product_image {
+  id         Int    @id @default(autoincrement())
+  product_id Int
+  main_url   String @db.Text
+  createAt   String @db.VarChar(255)
+  updatedAt  String @db.VarChar(255)
+  urls       String @db.Text
+}
+
+model product_size {
+  id         Int    @id @default(autoincrement())
+  product_id Int
+  size       Int
+  quantity   Int
+  createdAt  String @db.VarChar(255)
+  updatedAt  String @db.VarChar(255)
+
+}
+
+model products {
+  id          Int    @id @default(autoincrement())
+  name        String @db.VarChar(255)
+  description String @db.VarChar(255)
+  price       Float  @db.Float
+  type        String @db.VarChar(255)
+  brand       String @db.VarChar(255)
+  createAt    String @db.VarChar(255)
+  updatedAt   String @db.VarChar(255)
+
+}
+
+model ship_detail {
+  id        Int    @id @default(autoincrement())
+  user_id   Int
+  name      String @db.VarChar(255)
+  phone     String @db.VarChar(64)
+  email     String @db.VarChar(255)
+  createdAt String @db.VarChar(255)
+  updatedAt String @db.VarChar(255)
 }

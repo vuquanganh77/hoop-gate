@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 
 import { RegisterSchema } from "@/schemas";
-import { getUserByEmail } from "@/data/users";
+import { getUserByEmail } from "@/model/users/loader";
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
     const validateFields = RegisterSchema.safeParse(values);
