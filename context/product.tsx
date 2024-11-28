@@ -46,14 +46,23 @@ export const ShoesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 
     const addShoes = async (new_shoes: Shoes) => {
+        console.log("new_shoes neê", new_shoes);
+        
         try {
+            const formData = new FormData();
+            formData.append('name', new_shoes.name);
+            formData.append('description', new_shoes.description);
+            formData.append('price', new_shoes.price.toString());
+            formData.append('brand', new_shoes.brand);
+
+            // Append the file field if it exists
+            if (new_shoes.main_image) {
+                formData.append('main_image', new_shoes.main_image); // The file field
+            }
             // Gọi API để thêm giày mới vào DB
             const response = await fetch('/api/shoes', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(new_shoes),
+                body: formData, // Use FormData as the body
             });
 
             if (!response.ok) {
@@ -62,7 +71,18 @@ export const ShoesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
             const addedShoes = await response.json();
 
+            // Them picture cho giay
+
+            // const uploadImg = await fetch('/api/products', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({image: new_shoes.picture}),
+            // })
+
             // Cập nhật state với giày mới
+           
             setShoes((prevShoes) => [...prevShoes, addedShoes]);
         } catch (error) {
             console.error('Error adding new shoes:', error);
@@ -74,13 +94,22 @@ export const ShoesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         console.log("edited_shoes neê", edited_shoes);
         
         try {
+            const formDataEdit = new FormData();
+            formDataEdit.append('id', edited_shoes.id.toString());
+            formDataEdit.append('name', edited_shoes.name);
+            formDataEdit.append('description', edited_shoes.description);
+            formDataEdit.append('price', edited_shoes.price.toString());
+            formDataEdit.append('brand', edited_shoes.brand);
+
+            // Append the file field if it exists
+            if (edited_shoes.main_image) {
+                formDataEdit.append('main_image', edited_shoes.main_image); // The file field
+            }
+            
             // Gọi API để edit giày trong DB
             const response = await fetch('/api/shoes', {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(edited_shoes),
+                body: formDataEdit, // Use FormData as the body
             });
 
             if (!response.ok) {

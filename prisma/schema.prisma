@@ -47,7 +47,7 @@ model order_detail {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model orders {
-  id                Int
+  id                Int    @id @default(autoincrement())
   address_id        Int
   is_payment_online Int
   total_price       Float  @db.Float
@@ -60,7 +60,7 @@ model orders {
 
 model product_image {
   id         Int    @id @default(autoincrement())
-  product_id Int
+  product_id Int    @unique
   main_url   String @db.Text
   createAt   String @db.VarChar(255)
   updatedAt  String @db.VarChar(255)
@@ -74,7 +74,6 @@ model product_size {
   quantity   Int
   createdAt  String @db.VarChar(255)
   updatedAt  String @db.VarChar(255)
-
 }
 
 model products {
@@ -86,7 +85,6 @@ model products {
   brand       String @db.VarChar(255)
   createAt    String @db.VarChar(255)
   updatedAt   String @db.VarChar(255)
-
 }
 
 model ship_detail {

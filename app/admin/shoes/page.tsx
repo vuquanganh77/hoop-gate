@@ -7,6 +7,7 @@ import Modal from "@/components/admin/shoes/modal.add"
 import { useState, useEffect } from 'react';
 import { useShoesContext } from '@/context/product';
 import EditForm from "@/components/admin/shoes/edit-form"
+import AddSizeForm from "@/components/admin/shoes/add-size-form";
 
 import {
     Dialog,
@@ -19,17 +20,27 @@ import {
 
 
 export default function AdminShoesBoard() {
-    const [isOpen, setIsOpen] = useState(false);
+    const [edit_form_is_open, setEditFormOpen] = useState(false);
+    const [add_size_form_is_open, setAddSizeFormOpen] = useState(false);
     const [edit_shoes, setEditShoes] = useState<Shoes>();
     const { shoes, setShoes, addShoes, editShoes } = useShoesContext();
+    const [cur_shoes, setCurShoes] = useState<Shoes>();
 
-    const handleOpen = () => setIsOpen(true);
-    const handleClose = () => setIsOpen(false);
+    const handleEditFormOpen = () => setEditFormOpen(true);
+    const handleEditFormClose = () => setEditFormOpen(false);
+
+    const handleAddSizeFormOpen = () => setAddSizeFormOpen(true);
+    const handleAddSizeFormClose = () => setAddSizeFormOpen(false);
 
     const setValueEditShoes = (edit_shoes: Shoes) => {
         setEditShoes(edit_shoes);
         // editShoes(edit_shoes); // Gọi hàm edit giày
-        handleOpen();
+        handleEditFormOpen();
+    };
+
+    const setValueCurShoes = (shoes: Shoes) => {
+        setCurShoes(shoes);
+        handleAddSizeFormOpen();
     };
 
     useEffect(() => {
@@ -57,17 +68,30 @@ export default function AdminShoesBoard() {
                     <Modal />
                 </div>
                 <div className='px-20 py-6 flex-grow'>
-                    <DataTable columns={columns(setValueEditShoes)} data={shoes}/>
+                    <DataTable columns={columns(setValueEditShoes, setValueCurShoes)} data={shoes}/>
                 </div>
             </div>
 
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <Dialog open={edit_form_is_open} onOpenChange={setEditFormOpen}>
 
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle className="flex pb-6 justify-center">Edit shoes 👟</DialogTitle>
                         <DialogDescription asChild>
-                            <EditForm edit_shoes={edit_shoes} editShoes={editShoes} handleClose={handleClose}/>
+                            <EditForm edit_shoes={edit_shoes} editShoes={editShoes} handleClose={handleEditFormClose}/>
+                        </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+
+
+            <Dialog open={add_size_form_is_open} onOpenChange={setAddSizeFormOpen}>
+
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className="flex pb-6 justify-center">Add products size 👟</DialogTitle>
+                        <DialogDescription asChild>
+                            <AddSizeForm shoes={cur_shoes} handleClose={handleAddSizeFormClose}/>
                         </DialogDescription>
                     </DialogHeader>
                 </DialogContent>

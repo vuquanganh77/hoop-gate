@@ -5,6 +5,8 @@ import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 import { DataTableColumnHeader } from "@/components/admin/column-header"
 import ModalDelete from "@/components/admin/shoes/modal.delete"
 import ModalEdit from "@/components/admin/shoes/modal.edit"
+import ModalAddSize from "@/components/admin/shoes/modal.add.size"
+import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -24,13 +26,16 @@ export type Shoes = {
     brand: string
     price: number
     description: string
+    quantity: number
+    main_image: File
+    main_url: string
 }
 
-export const columns = (setValueEditShoes: (shoes: Shoes) => void): ColumnDef<Shoes>[] => [
+export const columns = (setValueEditShoes: (shoes: Shoes) => void, setCurShoes: (shoes: Shoes) => void): ColumnDef<Shoes>[] => [
     {
         accessorKey: "name",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Name" />
+                <DataTableColumnHeader column={column} title="Name" />
         ),
     },
     {
@@ -82,16 +87,17 @@ export const columns = (setValueEditShoes: (shoes: Shoes) => void): ColumnDef<Sh
                         <DropdownMenuContent align="end">
 
                             <DropdownMenuItem onClick={handleActionClick}>
-                                <ModalEdit edit_shoes={shoes} setValueEditShoes={setValueEditShoes} />
+                                <ModalAddSize shoes={shoes} setCurShoes={setCurShoes} />
                             </DropdownMenuItem>
                             
+                            <DropdownMenuItem onClick={handleActionClick}>
+                                <ModalEdit edit_shoes={shoes} setValueEditShoes={setValueEditShoes} />
+                            </DropdownMenuItem>
+
                             <DropdownMenuItem onClick={handleActionClick}>
                                 <ModalDelete id={shoes.id} />
                             </DropdownMenuItem>
 
-                            <DropdownMenuItem onClick={handleActionClick}>
-                                <ModalEdit edit_shoes={shoes} setValueEditShoes={setValueEditShoes} />
-                            </DropdownMenuItem>
 
                         </DropdownMenuContent>
 

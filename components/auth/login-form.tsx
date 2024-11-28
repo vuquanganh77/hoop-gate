@@ -41,7 +41,6 @@ export function LoginForm() {
         setSuccess("");
 
         login(values).then((data) => {
-            console.log("111", data);
             
             if(data?.error) {
                 setError(data.error);

@@ -5,9 +5,10 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ShoesSchema } from "@/schemas";
+import { ProductSchema } from "@/schemas";
+import { uploadImage } from "@/app/utils/products";
 
-import { useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import type { Shoes } from "@/app/admin/shoes/columns"
 
@@ -31,17 +32,18 @@ const EditForm: React.FC<EditFormProps> = ({ edit_shoes, editShoes, handleClose 
     console.log("12345", edit_shoes);
 
     useEffect(() => {
+
         console.log("edit_shoes has changed:", edit_shoes);
     }, [edit_shoes]);
 
     const form = useForm({
-        resolver: zodResolver(ShoesSchema),          // 👈 use for validation
+        resolver: zodResolver(ProductSchema),          // 👈 use for validation
         defaultValues: {
             name: edit_shoes?.name,
             description: edit_shoes?.description || "",
             price: edit_shoes?.price,
             brand: edit_shoes?.brand,
-            // picture: ""
+            main_image: null,
         }
     })
 
@@ -49,7 +51,7 @@ const EditForm: React.FC<EditFormProps> = ({ edit_shoes, editShoes, handleClose 
         edit_shoes = { ...edit_shoes, ...values };
 
         console.log("values", values, edit_shoes);
-        
+
         if (edit_shoes) {
             editShoes(edit_shoes);
             handleClose();
@@ -68,12 +70,12 @@ const EditForm: React.FC<EditFormProps> = ({ edit_shoes, editShoes, handleClose 
                         control={form.control}
                         name="name"
                         render={({ field }) => (
-                            
+
                             <FormItem>
                                 <FormLabel>Name</FormLabel>
                                 <FormControl>
                                     <Input
-                                        {...field} 
+                                        {...field}
                                         type="string"
                                     />
                                 </FormControl>
@@ -111,19 +113,57 @@ const EditForm: React.FC<EditFormProps> = ({ edit_shoes, editShoes, handleClose 
                         )}
                     />
 
-                    {/* <FormField
+                    <FormField
                         control={form.control}
-                        name="picture"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Picture</FormLabel>
-                                <FormControl>
-                                    <Input {...field} type="file" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    /> */}
+                        name="main_image"
+                        render={({ field }) => {
+                            const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+                            // Gán giá trị mặc định khi có sẵn URL
+                            useEffect(() => {      
+                                if (edit_shoes?.main_url && field.value === null) {
+                                    setPreviewImage(edit_shoes?.main_url); // URL mặc định từ backend
+                                } else {
+                                    setPreviewImage(field.value); 
+                                }
+                                
+                            }, []);
+
+                            return (
+                                <FormItem>
+                                    <FormLabel>Main Image</FormLabel>
+                                    <FormControl>
+                                        <>
+                                            {previewImage && (
+                                                <div className="mb-4">
+                                                    <img
+                                                        src={previewImage}
+                                                        alt="Preview"
+                                                        className="w-32 h-32 rounded-md"
+                                                    />
+                                                </div>
+                                            )}
+                                            <Input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => {
+                                                    if (e.target.files && e.target.files[0]) {
+                                                        const file = e.target.files[0];
+                                                        field.onChange(file);
+                                                        setPreviewImage(URL.createObjectURL(file)); // Cập nhật ảnh xem trước
+                                                    }
+                                                }}
+                                                onBlur={field.onBlur}
+                                                name={field.name}
+                                                ref={field.ref}
+                                            />
+                                        </>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            );
+                        }}
+                    />
 
                     <FormField
                         control={form.control}

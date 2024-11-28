@@ -65,6 +65,11 @@ export function DataTable<TData, TValue>({
         },
     })
 
+    // Hàm xử lý click vào ô "name"
+    const handleNameClick = (name: string) => {
+        alert(`Name: ${name}`);
+    }
+
     return (
         <div className="flex ml-auto mr-auto gap-3 flex-col p-6 bg-white">
             <div className="flex ">
@@ -129,16 +134,27 @@ export function DataTable<TData, TValue>({
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={row.getIsSelected() && "selected"}
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
+                                <>
+                                    {console.log("222", row.original)}
+                                    <TableRow
+                                        key={row.id}
+                                        data-state={row.getIsSelected() && "selected"}
+                                    >
+                                        {row.getVisibleCells().map((cell) => (
+                                            <TableCell
+                                                key={cell.id}
+                                                // Nếu là cell "name", thêm sự kiện click
+                                                onClick={() =>
+                                                    cell.column.id === "name" &&
+                                                    handleNameClick(row.original.name)
+                                                }
+                                                className={cell.column.id === "name" ? "hover:underline hover:pointer-cursor" : ""}
+                                            >
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                </>
                             ))
                         ) : (
                             <TableRow>

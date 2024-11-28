@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ShoesSchema } from "@/schemas";
+import { ProductSchema } from "@/schemas";
 
 import type { Shoes } from "@/app/admin/shoes/columns"
 
@@ -19,21 +19,23 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 
-const CreateForm: React.FC<{addShoes: (new_shoes: Shoes) => void }> = ({ addShoes }) => {
+const CreateForm: React.FC<{ addShoes: (new_shoes: Shoes) => void }> = ({ addShoes }) => {
 
-    
-    const form = useForm({    
-        resolver: zodResolver(ShoesSchema),          // 👈 use for validation
+
+    const form = useForm({
+        resolver: zodResolver(ProductSchema),          // 👈 use for validation
         defaultValues: {
             name: "",
             description: "",
             price: "",
             brand: "",
-            // picture: ""
+            main_image: null,
+            gallery: []
         }
     })
 
     const onSubmit = (values: any) => {
+        console.log("gia tri value", values);
         addShoes(values);
     }
 
@@ -83,26 +85,13 @@ const CreateForm: React.FC<{addShoes: (new_shoes: Shoes) => void }> = ({ addShoe
                             <FormItem>
                                 <FormLabel>Price</FormLabel>
                                 <FormControl>
-                                    <Input {...field}  type="number" />
+                                    <Input {...field} type="number" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
 
-                    {/* <FormField
-                        control={form.control}
-                        name="picture"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Picture</FormLabel>
-                                <FormControl>
-                                    <Input {...field} type="file" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    /> */}
 
                     <FormField
                         control={form.control}
@@ -121,6 +110,59 @@ const CreateForm: React.FC<{addShoes: (new_shoes: Shoes) => void }> = ({ addShoe
                         )}
                     />
                 </div>
+                <FormField
+                    control={form.control}
+                    name="main_image"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Image</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        if (e.target.files)
+                                            field.onChange(e.target.files[0])
+                                    }}
+                                    onBlur={field.onBlur}
+                                    name={field.name}
+                                    ref={field.ref}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                {/* Multiple Images Input
+                <FormField
+                    control={form.control}
+                    name="gallery"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Gallery</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple // Allow multiple file selection
+                                    onChange={(e) => {
+                                        if (e.target.files) {
+                                            // Convert FileList to an array of files
+                                            const filesArray = Array.from(e.target.files);
+                                            field.onChange(filesArray); // Pass the array to the form field
+                                        }
+                                    }}
+                                    onBlur={field.onBlur}
+                                    name={field.name}
+                                    ref={field.ref}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                /> */}
+
 
 
                 <Button type="submit" className="w-full">Add</Button>
