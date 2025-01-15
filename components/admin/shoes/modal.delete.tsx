@@ -9,26 +9,24 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 
-import { Shoes } from "@/app/admin/shoes/columns"
-
-import CreateForm from '@/components/admin/shoes/create-form';
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { useState } from "react"
-import { useShoesContext } from "@/context/product";
+import { useDispatch } from 'react-redux';
+import { deleteShoes } from '@/features/shoes-slice';
+import { AppDispatch } from '@/store/store';
 
 
 export default function ModalDelete({ id }: { id: number }) {
 
     const [isOpen, setIsOpen] = useState(false);
-    const { deleteShoes } = useShoesContext();
+    // const { deleteShoes } = useShoesContext();
+    const dispatch = useDispatch<AppDispatch>();
 
     const handleOpen = () => setIsOpen(true);
     const handleClose = () => setIsOpen(false);
 
     const handleDelete = async () => {
-        deleteShoes(id);
+        dispatch(deleteShoes(id));
         handleClose();
     }
 

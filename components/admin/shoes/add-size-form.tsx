@@ -34,15 +34,35 @@ const AddSizeForm: React.FC<AddSizeFormProps> = ({ shoes, handleClose }) => {
             name: shoes?.name,
             size: "",
             quantity: "",
-            // picture: ""
         }
     })
 
-    const onSubmit = (values: any) => {
+    const onSubmit = async (values: any) => {
         console.log("1231312", values);
         
-        addSize({id: values.id, size: values.size, quantity: values.quantity});
-        // handleClose();
+        try {
+            const response = await fetch('/api/sizes', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    action: 'add',
+                    id: values.id, 
+                    size: values.size, 
+                    quantity: values.quantity
+                }),
+            })
+    
+            if (!response.ok) {
+                throw new Error('Failed to fetch product sizes');
+            }
+    
+            // const sizes = await response.json();
+    
+        } catch (error) {
+            throw new Error('An unexpected error occurred');
+        }
+
+        // addSize({id: values.id, size: values.size, quantity: values.quantity});
+        handleClose();
     }
 
     return (

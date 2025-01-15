@@ -3,10 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Image } from "@chakra-ui/react";
 import { Star } from "lucide-react";
 import Link from 'next/link';
-
-
+import { useDispatch } from 'react-redux';
+import { useTypedSelector } from '@/hooks/use-type-selector';
+import { AppDispatch } from '@/store/store';
+import { useParams } from 'next/navigation';
+import { SkeletonLoading } from '@/components/layouts/skeleton'
+import { useSelector } from "react-redux";
+import { fetchUserDetails } from "@/features/user-slice";
+import { removeFav } from '@/features/fav-slice';
 
 interface ProductDetailProps {
+    id: number;
     source: string;
     name: string;
     description: string;
@@ -15,16 +22,32 @@ interface ProductDetailProps {
     type: string;
 }
 
-export const ProductFav = ({ source, name, rating, description, price, type }: ProductDetailProps) => {
+export const ProductFav = ({ id, source, name, rating, description, price, type }: ProductDetailProps) => {
     let href = "";
+    // const id_number = parseInt(id);
 
     if (type == "shoes") {
-        href = "/shoes/1";
+        href = `/shoes/${id}`;
     } else if (type == "clothes") {
-        href = "/clothes/1";
+        href = `/clothes/${id}`;
     } else {
-        href = "/accessories/1";
+        href = `/accessories/${id}`;
     }
+
+    const dispatch = useDispatch<AppDispatch>();
+
+    const handleRemove = () => {
+        console.log("remove", id);
+
+        dispatch(removeFav(id));
+
+
+    }
+
+    const formatted_price = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "VND",
+    }).format(price)
 
     return (
         <>
@@ -35,12 +58,12 @@ export const ProductFav = ({ source, name, rating, description, price, type }: P
                     </div>
                     <div className="flex justify-between">
                         <span className="font-bold">{name}</span>
-                        <span className="flex items-center gap-1"> {price}</span>
+                        <span className="flex items-center gap-1"> {formatted_price}</span>
                     </div>
                 </Link>
                 <div>{description}</div>
 
-                <Button className="mt-3 border rounded-lg hover:bg-black hover:text-white">Add to cart</Button>
+                <Button className="mt-3 border rounded-lg hover:bg-white hover:text-black" onClick={handleRemove}>Remove</Button>
             </div>
         </>
     )

@@ -13,6 +13,7 @@ export const BigGridBox = ({ source }: GridBoxProps) => {
             h={['200px', '200px', '400px', '500px', '500px']}
             borderRadius={'15px'}
             overflow={'hidden'}
+            className="mb-2"
         >
             <Image className="imgAnimation" mt={'-35%'} src={source} />
         </GridItem>

@@ -11,7 +11,7 @@ interface ShoesAttrs {
     name: string;
     brand: string;
     price: number;
-    description?: string;
+    description: string;
 }
 
 
@@ -93,11 +93,18 @@ export async function addSize({ id, size, quantity }: { id: number, size: string
     try {
         let createAt = new Date();
         let updatedAt = new Date();
+         // Validate size and quantity
+         if (!size || isNaN(parseInt(size))) {
+            throw new Error("Invalid size value provided");
+        }
+        if (!quantity || isNaN(parseInt(quantity))) {
+            throw new Error("Invalid quantity value provided");
+        }
         const sizeInt = parseInt(size);
         const quantityInt = parseInt(quantity);
         const product_id = id;
     
-        console.log({
+        console.log("gia tri truyen vao", {
             product_id,
             sizeInt,
             quantityInt,
@@ -115,20 +122,64 @@ export async function addSize({ id, size, quantity }: { id: number, size: string
         return { newShoesSize: shoes_sizes };
 
     } catch (error) {
+        console.error("Error in addSize function:", error);
         return { error: error };
     }
 }
 
 
-export async function saveImage({ shoes, main_image }: { shoes: any, main_image: any }) {
+export async function saveImage({ shoes, main_image, detail_images }: { shoes: any, main_image: any, detail_images: any }) {
     try {
         const createAt = new Date();
         const updatedAt = new Date();
 
+        // Serialize detail_images array to a JSON string
+        const serializedDetailImages = JSON.stringify(detail_images);
+
         await db.product_image.create({
-            data: { product_id: shoes.id, main_url: main_image, createAt: createAt.toString(), updatedAt: updatedAt.toString(), urls: "" }
+            data: { product_id: shoes.id, main_url: main_image, createAt: createAt.toString(), updatedAt: updatedAt.toString(), urls: serializedDetailImages }
         });
     } catch (error) {
+        return { error: 'Failed to save images' };
+    }
+}
+
+export async function saveImageEditing({ shoes, main_image, detail_images }: { shoes: any, main_image: any, detail_images: any }) {
+    try {
+        const updatedAt = new Date();
+
+        // Serialize detail_images array to a JSON string
+        const serializedDetailImages = JSON.stringify(detail_images);
+
+        // Check if a record already exists for the given product ID
+        const existingRecord = await db.product_image.findUnique({
+            where: { product_id: shoes.id },
+        });
+
+        if (existingRecord) {
+            // Update the existing record
+            await db.product_image.update({
+                where: { product_id: shoes.id },
+                data: {
+                    main_url: main_image,
+                    updatedAt: updatedAt.toString(),
+                    urls: serializedDetailImages,
+                },
+            });
+        } else {
+            // Create a new record if it doesn't exist
+            await db.product_image.create({
+                data: {
+                    product_id: shoes.id,
+                    main_url: main_image,
+                    createAt: new Date().toString(),
+                    updatedAt: updatedAt.toString(),
+                    urls: serializedDetailImages,
+                },
+            });
+        }
+    } catch (error) {
+        console.error("Error updating or saving product images:", error);
         return { error: 'Failed to save images' };
     }
 }

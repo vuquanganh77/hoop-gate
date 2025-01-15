@@ -25,8 +25,10 @@ export const ShoeSection = ({ heading, description, img }: ShoeSectionProps) => 
                 // templateColumns={'repeat(2, 1fr)'}
             >
                 <BigGridBox source={img[0]} />
-                <SmallGridBox source={img[1]} />
-                <SmallGridBox source={img[2]} />
+                <div className="grid grid-cols-2 gap-2">
+                    <SmallGridBox source={img[1]} />
+                    <SmallGridBox source={img[2]} />
+                </div>
             </Grid>
         </Box>
     );

@@ -13,19 +13,19 @@ import { Shoes } from "@/app/admin/shoes/columns"
 
 import CreateForm from '@/components/admin/shoes/create-form';
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { useState } from "react"
-import { useShoesContext } from "@/context/product";
+import { useDispatch } from 'react-redux';
+import { addShoes } from '@/features/shoes-slice';
+import { AppDispatch } from '@/store/store';
 
 
 export default function Modal() {
 
     const [isOpen, setIsOpen] = useState(false);
-    const { addShoes } = useShoesContext();
+    const dispatch = useDispatch<AppDispatch>();
 
     const handleAddShoes = (new_shoes: Shoes) => {
-        addShoes(new_shoes); // Gọi hàm thêm giày mới
+       dispatch(addShoes(new_shoes));
         setIsOpen(false);
     };
 

@@ -23,6 +23,15 @@ import {
 } from "@/components/ui/table"
 
 import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+
+import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
@@ -34,6 +43,15 @@ import { Input } from "@/components/ui/input"
 import { DataTablePagination } from "@/components/admin/pagination"
 import { useState } from "react"
 import { Shoes } from "@/app/admin/shoes/columns"
+import { useDispatch } from 'react-redux';
+import { useTypedSelector } from '@/hooks/use-type-selector';
+import { loadShoes } from '@/features/shoes-slice';
+import { AppDispatch } from '@/store/store';
+import { set } from "zod"
+import { getProductSizesByProductId } from "@/model/products/shoes/loader"
+import { ProductDetail } from "@/components/products/detail"
+import { ShoesSizeDetail } from "@/app/admin/shoes/product-detail"
+
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -47,6 +65,13 @@ export function DataTable<TData, TValue>({
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+
+    const dispatch = useDispatch<AppDispatch>();
+    const pagination = useTypedSelector((state) => ({
+        pageIndex: state.shoes.page_index,
+        pageSize: state.shoes.page_size,
+    }))
+
 
     const table = useReactTable({
         data,
@@ -62,13 +87,25 @@ export function DataTable<TData, TValue>({
             sorting,
             columnFilters,
             columnVisibility,
+            pagination
         },
     })
 
-    // Hàm xử lý click vào ô "name"
-    const handleNameClick = (name: string) => {
-        alert(`Name: ${name}`);
-    }
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState<number | null>(null);
+
+    const handleNameClick = (name: string, id: number) => {
+        setSelectedId(id); // Store the id of the clicked row
+        setIsModalOpen(true); // Open the modal
+    };
+
+    // const closeModal = () => {
+    //     setIsModalOpen(false);
+    //     setSelectedId(null); // Reset selectedId when closing modal
+    // };
+
+
 
     return (
         <div className="flex ml-auto mr-auto gap-3 flex-col p-6 bg-white">
@@ -135,7 +172,6 @@ export function DataTable<TData, TValue>({
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <>
-                                    {console.log("222", row.original)}
                                     <TableRow
                                         key={row.id}
                                         data-state={row.getIsSelected() && "selected"}
@@ -146,11 +182,22 @@ export function DataTable<TData, TValue>({
                                                 // Nếu là cell "name", thêm sự kiện click
                                                 onClick={() =>
                                                     cell.column.id === "name" &&
-                                                    handleNameClick(row.original.name)
+                                                    handleNameClick(row.original?.name, row.original?.id)
                                                 }
-                                                className={cell.column.id === "name" ? "hover:underline hover:pointer-cursor" : ""}
+                                                className={cell.column.id === "name" ? " cursor-pointer hover:underline hover:pointer-cursor" : ""}
                                             >
-                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                {cell.column.id === "name" ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <img
+                                                            src={row.original?.main_url || ""} // Replace with the actual path to the image
+                                                            alt={row.original?.name}
+                                                            className="w-8 h-8 object-cover rounded-md"
+                                                        />
+                                                        <span>{flexRender(cell.column.columnDef.cell, cell.getContext())}</span>
+                                                    </div>
+                                                ) : (
+                                                    flexRender(cell.column.columnDef.cell, cell.getContext())
+                                                )}
                                             </TableCell>
                                         ))}
                                     </TableRow>
@@ -168,6 +215,19 @@ export function DataTable<TData, TValue>({
             </div>
 
             <DataTablePagination table={table} />
+
+
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className="flex pb-6 justify-center">Product Sizes 👟</DialogTitle>
+                        <DialogDescription asChild>
+                            <ShoesSizeDetail product_id={selectedId} />
+                        </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
 
         </div>
     )

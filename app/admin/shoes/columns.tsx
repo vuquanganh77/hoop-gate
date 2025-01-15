@@ -27,11 +27,13 @@ export type Shoes = {
     price: number
     description: string
     quantity: number
-    main_image: File
+    main_image?: File
     main_url: string
+    createAt: string;
+    updatedAt: string;
 }
 
-export const columns = (setValueEditShoes: (shoes: Shoes) => void, setCurShoes: (shoes: Shoes) => void): ColumnDef<Shoes>[] => [
+export const columns = (setValueEditShoes: (shoes: Shoes) => void, setValueCurShoes: (shoes: Shoes) => void): ColumnDef<Shoes>[] => [
     {
         accessorKey: "name",
         header: ({ column }) => (
@@ -87,7 +89,7 @@ export const columns = (setValueEditShoes: (shoes: Shoes) => void, setCurShoes: 
                         <DropdownMenuContent align="end">
 
                             <DropdownMenuItem onClick={handleActionClick}>
-                                <ModalAddSize shoes={shoes} setCurShoes={setCurShoes} />
+                                <ModalAddSize shoes={shoes} setValueCurShoes={setValueCurShoes} />
                             </DropdownMenuItem>
                             
                             <DropdownMenuItem onClick={handleActionClick}>

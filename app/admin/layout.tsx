@@ -5,7 +5,7 @@
 // import Link from 'next/link';
 // import { LayoutDashboard, BarChart3, UserCircle } from 'lucide-react';
 // import { useState, useEffect } from 'react';
-import { ShoesProvider } from '@/context/product';
+// import { ShoesProvider } from '@/context/product';
 // import { useRouter } from 'next/router';
 
 // export default function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -117,9 +117,7 @@ export default function AdminLayout({
 }>) {
     return (
         <>
-        <ShoesProvider>
             {children}
-        </ShoesProvider>
         </>
     );
 }

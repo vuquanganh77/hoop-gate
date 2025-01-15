@@ -2,10 +2,10 @@
 
 import { Shoes } from "@/app/admin/shoes/columns"
 
-export default function ModalAddSize({ shoes, setCurShoes  }: { shoes: Shoes, setCurShoes: (shoes: Shoes) => void }) {
+export default function ModalAddSize({ shoes, setValueCurShoes  }: { shoes: Shoes, setValueCurShoes: (shoes: Shoes) => void }) {
     return (
         <>
-            <button onClick={() => setCurShoes(shoes)} className="text-gray-600">
+            <button onClick={() => setValueCurShoes(shoes)} className="text-gray-600">
                 Add size
             </button>
         </>
